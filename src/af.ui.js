@@ -382,7 +382,8 @@
         goBack: function(e) {
             //find the view
             var isSameView = true;
-            var currentView=$(this.activeDiv).closest(".view");
+            var activeDiv=$(this.activeDiv);
+            var currentView=activeDiv.closest(".view");
             var targetView=currentView;
             if(e&&e.target) {
                 targetView=$(e.target).closest(".view");
@@ -406,11 +407,16 @@
                 var toTarget = hist[hist.length-1].target;
                 if(!toTarget) return;
                 if(isSameView && (item.target===toTarget)) return;
+            
+                activeDiv.trigger("panelbeforeunload");
+
                 if (!isSameView) {
                     this.clearHistory(); //Clear current view history
+                    $(item.target).trigger("panelbeforeload");
                     this.runViewTransition(this.transitionType, targetView, currentView, item.target, true);
                 }
                 else {
+                    $(toTarget).trigger("panelbeforeload");
                     this.runTransition(item.transition, item.target, toTarget, true);
                 }
                 this.loadContentData(toTarget, targetView, true);
@@ -419,6 +425,7 @@
             else {
                 //try to dismiss the view
                 try{
+                    $(item.target).trigger("panelbeforeload");
                     this.dismissView(item.target,item.transition);
                 }
                 catch(ex){
