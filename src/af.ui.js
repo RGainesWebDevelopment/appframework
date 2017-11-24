@@ -619,18 +619,19 @@
          */
         showMask: function(text, value) {
             if (!text) text = this.loadingText || "";
-            if (!value || typeof value !== "number") timeout = 15000;
             $.query("#afui_mask>h1").html(text);
             $.query("#afui_mask").show();
             this.showingMask = true;
 
             var self = this;
-            //set another timeout to auto-hide the mask if something goes wrong, default is 15 sec
-            setTimeout(function() {
-                if(self.showingMask) {
-                    self.hideMask();
-                }
-            }, value);
+            //If value was specified, set another timeout to auto-hide the mask
+            if(value && typeof value === "number") {
+               setTimeout(function() {
+                    if(self.showingMask) {
+                        self.hideMask();
+                    }
+                }, value);
+            }
         },
         /**
          * Hide the loading mask
